@@ -1,4 +1,4 @@
-const DEBUG = true
+const DEBUG = false
 
 let just_popped = false
 let last_state = {}
