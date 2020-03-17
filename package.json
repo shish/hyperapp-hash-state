@@ -1,0 +1,79 @@
+{
+  "name": "hyperapp-auto-history",
+  "version": "1.0.0",
+  "description": "Automatically manage a subset of app state in the URL hash",
+  "keywords": [
+    "hyperapp",
+    "state"
+  ],
+  "main": "dist/hyperappAutoHistory.js",
+  "module": "src/index.js",
+  "peerDependencies": {
+    "hyperapp": "^2.0.0"
+  },
+  "devDependencies": {
+    "@babel/preset-env": "=7.4.2",
+    "eslint": "=5.15.3",
+    "eslint-plugin-compat": "=3.0.1",
+    "jest": "=24.5.0",
+    "jsdom": "=14.0.0",
+    "prettier": "=1.16.4",
+    "rollup": "=1.7.2",
+    "uglify-es": "^3.3.9",
+    "babel-eslint": "^10.1.0"
+  },
+  "scripts": {
+    "clean": "npx rimraf coverage dist node_modules",
+    "format": "prettier --write '{src,test}/**/*.js'",
+    "format:check": "prettier --list-different {src,test}/**/*.js",
+    "lint": "eslint {src,test}/**/*.js",
+    "test": "jest --coverage --no-cache",
+    "bundle": "rollup -i src/index.js -o dist/hyperappAutoHistory.js -m -f umd -n hyperappAutoHistory",
+    "minify": "uglifyjs dist/hyperappAutoHistory.js -o dist/hyperappAutoHistory.js -mc pure_funcs=['Object.defineProperty'] --source-map includeSources,url=hyperappAutoHistory.js.map",
+    "check": "npm run format:check && npm run lint && npm t",
+    "build": "npm run check && npm run bundle && npm run minify",
+    "prepare": "npm run build",
+    "release": "./pre-flight-tests && npm run clean && npm i && ./pre-flight-tests && git tag $npm_package_version && git push && git push --tags && npm publish --tag next"
+  },
+  "prettier": {
+    "semi": false
+  },
+  "babel": {
+    "presets": [
+      "@babel/env"
+    ]
+  },
+  "eslintConfig": {
+    "extends": "eslint:recommended",
+    "plugins": [
+      "compat"
+    ],
+    "parser": "babel-eslint",
+    "parserOptions": {
+      "sourceType": "module"
+    },
+    "env": {
+      "browser": true
+    },
+    "rules": {
+      "no-use-before-define": "error",
+      "compat/compat": "error",
+      "no-console": "off"
+    },
+    "settings": {
+      "polyfills": [
+        "fetch"
+      ]
+    }
+  },
+  "browserslist": [
+    "IE 10"
+  ],
+  "author": "Shish <shish@shishnet.org>",
+  "license": "MIT",
+  "repository": "shish/hyperapp-auto-state",
+  "homepage": "https://github.com/shish/hyperapp-auto-state",
+  "bugs": {
+    "url": "https://github.com/shish/hyperapp-auto-state/issues"
+  }
+}
