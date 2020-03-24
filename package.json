@@ -1,6 +1,6 @@
 {
   "name": "hyperapp-auto-history",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Automatically manage a subset of app state in the URL hash",
   "keywords": [
     "hyperapp",
@@ -62,12 +62,12 @@
     },
     "settings": {
       "polyfills": [
-        "fetch"
+        "URLSearchParams"
       ]
     }
   },
   "browserslist": [
-    "IE 10"
+    "defaults"
   ],
   "author": "Shish <shish@shishnet.org>",
   "license": "MIT",

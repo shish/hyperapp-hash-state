@@ -1,5 +1,21 @@
 const DEBUG = false
 
+function encode(data, props) {
+  if (props.encoder == "json") {
+    return encodeURIComponent(JSON.stringify(data))
+  } else {
+    return Object.fromEntries(new URLSearchParams(data))
+  }
+}
+
+function decode(data, props) {
+  if (props.encoder == "json") {
+    return JSON.parse(decodeURIComponent(data))
+  } else {
+    return new URLSearchParams(data).toString()
+  }
+}
+
 let just_popped = false
 let last_state = {}
 function save_if_changed(state, props) {
@@ -24,7 +40,7 @@ function save_if_changed(state, props) {
   }
   if (DEBUG)
     console.log("State change:", last_state, "->", our_state, "=", mode)
-  let hashed = "#" + encodeURIComponent(JSON.stringify(our_state))
+  let hashed = "#" + encode(our_state, props)
   if (mode === "push") window.history.pushState(our_state, "", hashed)
   if (mode === "replace") window.history.replaceState(our_state, "", hashed)
   last_state = our_state
@@ -47,7 +63,7 @@ function mergeHashIntoState(state, props) {
   let state_to_restore = {}
   if (window.location.hash) {
     let hash = window.location.hash.slice(1)
-    let json = JSON.parse(decodeURIComponent(hash))
+    let json = decode(hash, props)
     for (let i = 0; i < props.all_attrs.length; i++) {
       state_to_restore[props.all_attrs[i]] = json[props.all_attrs[i]]
     }
@@ -62,7 +78,7 @@ export function AutoHistory(props) {
   if (window.location.hash) {
     // If we have some state in the hash, stick that into the app state
     let hash = window.location.hash.slice(1)
-    let json = JSON.parse(decodeURIComponent(hash))
+    let json = decode(hash, props)
     if (DEBUG) console.log("Loading initial state from hash:", json)
     for (let i = 0; i < props.all_attrs.length; i++) {
       props.init[props.all_attrs[i]] = json[props.all_attrs[i]]
@@ -77,7 +93,7 @@ export function AutoHistory(props) {
       our_state[attr] = props.init[attr]
     }
     if (DEBUG) console.log("Saving initial state to hash:", our_state)
-    window.location.hash = "#" + encodeURIComponent(JSON.stringify(our_state))
+    window.location.hash = "#" + encode(our_state, props)
     just_popped = true
   }
 
