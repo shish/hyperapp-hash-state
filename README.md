@@ -14,6 +14,8 @@ There are currently three supplied encoders:
   - If `init.foo` is a number, `state.foo` will be set to `parseFloat(value)`.
   - If `init.foo` is a boolean, `state.foo` will be `true` if `value` is
     any of "on", "true", or "1"
+  - If `init.foo` is null, then `"null"` will be cast to `null` and all other
+    inputs will be strings
 - `url`: everything is strings, this is the raw data and it's up to you to
   handle it correctly.
 - `json`: state is stored as a `URIEncode`'d JSON dictionary, this gives the

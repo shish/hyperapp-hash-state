@@ -19,6 +19,9 @@ export function decode(data, props) {
     for (let i = 0; i < keys.length; i++) {
       const key = keys[i]
       if (props.init !== undefined) {
+        if (props.init[key] === null) {
+          obj[key] = obj[key] === "null" ? null : obj[key]
+        }
         if (typeof props.init[key] === "boolean") {
           obj[key] = ["true", "on", "1"].indexOf(obj[key].toLowerCase()) !== -1
         }

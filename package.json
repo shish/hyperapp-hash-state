@@ -1,6 +1,6 @@
 {
   "name": "hyperapp-auto-history",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "Automatically manage a subset of app state in the URL hash",
   "keywords": [
     "hyperapp",
