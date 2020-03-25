@@ -1,18 +1,18 @@
 const DEBUG = false
 
-function encode(data, props) {
-  if (props.encoder == "json") {
+export function encode(data, props) {
+  if (props.encoder === "json") {
     return encodeURIComponent(JSON.stringify(data))
   } else {
-    return Object.fromEntries(new URLSearchParams(data))
+    return new URLSearchParams(data).toString()
   }
 }
 
-function decode(data, props) {
-  if (props.encoder == "json") {
+export function decode(data, props) {
+  if (props.encoder === "json") {
     return JSON.parse(decodeURIComponent(data))
   } else {
-    return new URLSearchParams(data).toString()
+    return Object.fromEntries(new URLSearchParams(data))
   }
 }
 
