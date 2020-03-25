@@ -67,14 +67,14 @@ function save_if_changed(state, props) {
 }
 
 /*
- * Subscriber - listen for window.history.popstate, update our state
- * object using the saved state
+ * Whenever the hash changes (either via user typing, or back / forward
+ * button, or some other programatic thing) we want to sync our state
  */
 function historyPopEffect(dispatch, action) {
   let handler = dispatch.bind(null, action)
-  window.addEventListener("popstate", handler)
+  window.addEventListener("hashchange", handler)
   return function() {
-    window.removeEventListener("popstate", handler)
+    window.removeEventListener("hashchange", handler)
   }
 }
 
