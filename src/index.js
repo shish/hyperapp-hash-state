@@ -3,7 +3,9 @@ const DEBUG = false
 export function encode(data, props) {
   if (props.encoder === "json") {
     return encodeURIComponent(JSON.stringify(data))
-  } else {
+  } else if (props.encoder === "smart-url") {
+    return new URLSearchParams(data).toString()
+  } else if (props.encoder === "url") {
     return new URLSearchParams(data).toString()
   }
 }
@@ -11,7 +13,22 @@ export function encode(data, props) {
 export function decode(data, props) {
   if (props.encoder === "json") {
     return JSON.parse(decodeURIComponent(data))
-  } else {
+  } else if (props.encoder === "smart-url") {
+    let obj = Object.fromEntries(new URLSearchParams(data))
+    const keys = Object.keys(obj)
+    for (let i = 0; i < keys.length; i++) {
+      const key = keys[i]
+      if (props.init !== undefined) {
+        if (typeof props.init[key] === "boolean") {
+          obj[key] = ["true", "on", "1"].indexOf(obj[key].toLowerCase()) !== -1
+        }
+        if (typeof props.init[key] === "number") {
+          obj[key] = parseFloat(obj[key])
+        }
+      }
+    }
+    return obj
+  } else if (props.encoder === "url") {
     return Object.fromEntries(new URLSearchParams(data))
   }
 }
@@ -71,8 +88,15 @@ function mergeHashIntoState(state, props) {
   return { ...state, ...state_to_restore }
 }
 
-export function AutoHistory(props) {
-  props.all_attrs = (props.push || []).concat(props.replace || [])
+export function AutoHistory(args) {
+  let props = {
+    init: {},
+    push: [],
+    replace: [],
+    encoder: "smart-url",
+    ...args
+  }
+  props.all_attrs = props.push.concat(props.replace)
 
   // On initial load
   if (window.location.hash) {

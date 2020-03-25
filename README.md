@@ -7,12 +7,18 @@ fields changes, update the URL hash and push a new history entry.
 If the page is loaded with no hash, populate it with default settings. If
 the page is loaded with a hash, load our initial settings from there.
 
-By default the hash is encoded as key / value string pairs as is fairly
-standard for URLs: `#state=42&foo=bar`
+There are currently three supplied encoders:
 
-By passing `encoder: "json"` you can encode the state as URIEncode'd JSON,
-eg if you're tracking state.screen and it currently has the value "About":
-`#%7B%22screen%22%3A%22About%22%7D`
+- `smart-url`: key / value pairs, but attempt to cast data types to match
+  what was supplied in `init`
+  - If `init.foo` is a number, `state.foo` will be set to `parseFloat(value)`.
+  - If `init.foo` is a boolean, `state.foo` will be `true` if `value` is
+    any of "on", "true", or "1"
+- `url`: everything is strings, this is the raw data and it's up to you to
+  handle it correctly.
+- `json`: state is stored as a `URIEncode`'d JSON dictionary, this gives the
+  most accurate types (eg it deals with `null` in a sane way), but it does look
+  awfully ugly in the URL bar.
 
 Args:
 
