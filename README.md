@@ -27,7 +27,7 @@ Usage:
 ```
 import {AutoHistory} from "hyperapp-auto-history";
 
-HistoryManager = AutoHistory({
+const HistoryManager = AutoHistory({
     init: state,
     push: ["page", "track_id"],
     replace: ["search"],
