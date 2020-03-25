@@ -37,7 +37,7 @@ const HistoryManager = AutoHistory({
 app({
     init: state,
     subscriptions: function(state) {
-        HistoryManager.push_if_state_changed(state);
+        HistoryManager.push_state_if_changed(state);
         return [HistoryManager];
     }
 })
