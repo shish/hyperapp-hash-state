@@ -44,7 +44,7 @@ describe("smart-url decoder", () => {
       null: null,
       array: ["1", "2", "3"]
     }
-    let decoded = decode(data, {encoder: "smart-url", init})
+    let decoded = decode(data, { encoder: "smart-url", init })
     expect(decoded).toEqual(expected)
   })
 })
