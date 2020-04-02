@@ -21,8 +21,11 @@ describe("url decoder", () => {
 
 describe("smart-url encoder", () => {
   it("should work", () => {
-    let encoded = encode({ state: 42, foo: "bar" }, { encoder: "smart-url" })
-    expect(encoded).toEqual("state=42&foo=bar")
+    let encoded = encode(
+      { state: 42, foo: "bar", array: [1, 2, 3] },
+      { encoder: "smart-url" }
+    )
+    expect(encoded).toEqual("state=42&foo=bar&array=1%2C2%2C3")
   })
 })
 
@@ -32,12 +35,17 @@ describe("smart-url decoder", () => {
     expect(decoded).toEqual({ state: "42", foo: "bar" })
   })
   it("should try to keep type hints", () => {
-    let init = { string: "cake", int: 123, bool: false, null: null }
-    let decoded = decode("int=42&string=42&bool=42&null=null", {
-      encoder: "smart-url",
-      init
-    })
-    expect(decoded).toEqual({ string: "42", int: 42, bool: false, null: null })
+    let init = { string: "cake", int: 123, bool: false, null: null, array: [] }
+    let data = "int=42&string=42&bool=42&null=null&array=1,2,3"
+    let expected = {
+      string: "42",
+      int: 42,
+      bool: false,
+      null: null,
+      array: ["1", "2", "3"]
+    }
+    let decoded = decode(data, {encoder: "smart-url", init})
+    expect(decoded).toEqual(expected)
   })
 })
 

@@ -28,6 +28,9 @@ export function decode(data, props) {
         if (typeof props.init[key] === "number") {
           obj[key] = parseFloat(obj[key])
         }
+        if (Array.isArray(props.init[key])) {
+          obj[key] = obj[key].split(",")
+        }
       }
     }
     return obj
