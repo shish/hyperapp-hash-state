@@ -15,9 +15,7 @@ export function decode(data, props) {
     return JSON.parse(decodeURIComponent(data));
   } else if (props.encoder === "smart-url") {
     let obj = Object.fromEntries(new URLSearchParams(data));
-    const keys = Object.keys(obj);
-    for (let i = 0; i < keys.length; i++) {
-      const key = keys[i];
+    Object.keys(obj).forEach(function(key) {
       if (props.init !== undefined) {
         if (props.init[key] === null) {
           obj[key] = obj[key] === "null" ? null : obj[key];
@@ -33,7 +31,7 @@ export function decode(data, props) {
           else obj[key] = obj[key].split(",");
         }
       }
-    }
+    });
     return obj;
   } else if (props.encoder === "url") {
     return Object.fromEntries(new URLSearchParams(data));
@@ -51,17 +49,15 @@ function save_if_changed(state, props) {
   }
   let mode = "no-change";
   let our_state = {};
-  for (let i = 0; i < props.all_attrs.length; i++) {
-    let attr = props.all_attrs[i];
+  props.all_attrs.forEach(function(attr) {
     our_state[attr] = state[attr];
     if (last_state[attr] !== our_state[attr]) {
-      if (props.push.indexOf(attr) >= 0) {
+      if (props.push.indexOf(attr) >= 0 || mode === "push") {
         mode = "push";
-        break;
       }
       mode = "replace";
     }
-  }
+  });
   if (DEBUG)
     console.log("State change:", last_state, "->", our_state, "=", mode);
   let hashed = "#" + encode(our_state, props);
@@ -88,12 +84,11 @@ function mergeHashIntoState(state, props) {
   if (window.location.hash) {
     let hash = window.location.hash.slice(1);
     let json = decode(hash, props);
-    for (let i = 0; i < props.all_attrs.length; i++) {
-      let attr = props.all_attrs[i];
+    props.all_attrs.forEach(function(attr) {
       if (json[attr] !== undefined) {
         state_to_restore[attr] = json[attr];
       }
-    }
+    });
   }
   return { ...state, ...state_to_restore };
 }
@@ -114,21 +109,19 @@ export function AutoHistory(args) {
     let hash = window.location.hash.slice(1);
     let json = decode(hash, props);
     if (DEBUG) console.log("Loading initial state from hash:", json);
-    for (let i = 0; i < props.all_attrs.length; i++) {
-      let attr = props.all_attrs[i];
+    props.all_attrs.forEach(function(attr) {
       if (json[attr] !== undefined) {
         props.init[attr] = json[attr];
       }
-    }
+    });
     last_state = json;
     just_popped = true;
   } else {
     // if the hash is empty, then fill it with initial app state
     let our_state = {};
-    for (let i = 0; i < props.all_attrs.length; i++) {
-      let attr = props.all_attrs[i];
+    props.all_attrs.forEach(function(attr) {
       our_state[attr] = props.init[attr];
-    }
+    });
     if (DEBUG) console.log("Saving initial state to hash:", our_state);
     window.location.hash = "#" + encode(our_state, props);
     just_popped = true;
