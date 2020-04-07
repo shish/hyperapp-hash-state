@@ -1,6 +1,6 @@
 {
   "name": "hyperapp-auto-history",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "description": "Automatically manage a subset of app state in the URL hash",
   "keywords": [
     "hyperapp",
@@ -36,7 +36,7 @@
     "release": "./pre-flight-tests && npm run clean && npm i && ./pre-flight-tests && git tag $npm_package_version && git push && git push --tags && npm publish --tag latest"
   },
   "prettier": {
-    "semi": false
+    "semi": true
   },
   "babel": {
     "presets": [
