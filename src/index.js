@@ -112,7 +112,10 @@ export function AutoHistory(args) {
     let json = decode(hash, props);
     if (DEBUG) console.log("Loading initial state from hash:", json);
     for (let i = 0; i < props.all_attrs.length; i++) {
-      props.init[props.all_attrs[i]] = json[props.all_attrs[i]];
+      let attr = props.all_attrs[i];
+      if (json[attr] !== undefined) {
+        props.init[attr] = json[attr];
+      }
     }
     last_state = json;
     just_popped = true;
