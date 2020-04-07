@@ -29,7 +29,8 @@ export function decode(data, props) {
           obj[key] = parseFloat(obj[key]);
         }
         if (Array.isArray(props.init[key])) {
-          obj[key] = obj[key].split(",");
+          if (obj[key] === "") obj[key] = [];
+          else obj[key] = obj[key].split(",");
         }
       }
     }

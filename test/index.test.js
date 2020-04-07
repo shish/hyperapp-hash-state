@@ -47,6 +47,17 @@ describe("smart-url decoder", () => {
     let decoded = decode(data, { encoder: "smart-url", init });
     expect(decoded).toEqual(expected);
   });
+  it("should turn empty string into empty array", () => {
+    let init = { array0: [], array1: [], array2: [] };
+    let data = "array0=&array1=a&array2=b,c";
+    let expected = {
+      array0: [],
+      array1: ["a"],
+      array2: ["b", "c"]
+    };
+    let decoded = decode(data, { encoder: "smart-url", init });
+    expect(decoded).toEqual(expected);
+  });
 });
 
 describe("json encoder", () => {
