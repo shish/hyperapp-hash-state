@@ -89,7 +89,10 @@ function mergeHashIntoState(state, props) {
     let hash = window.location.hash.slice(1);
     let json = decode(hash, props);
     for (let i = 0; i < props.all_attrs.length; i++) {
-      state_to_restore[props.all_attrs[i]] = json[props.all_attrs[i]];
+      let attr = props.all_attrs[i];
+      if (json[attr] !== undefined) {
+        state_to_restore[attr] = json[attr];
+      }
     }
   }
   return { ...state, ...state_to_restore };
