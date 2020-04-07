@@ -52,10 +52,13 @@ function save_if_changed(state, props) {
   props.all_attrs.forEach(function(attr) {
     our_state[attr] = state[attr];
     if (last_state[attr] !== our_state[attr]) {
+      // if any of our changed attributes are in the push list
+      // then push, else replace
       if (props.push.indexOf(attr) >= 0 || mode === "push") {
         mode = "push";
+      } else {
+        mode = "replace";
       }
-      mode = "replace";
     }
   });
   if (DEBUG)
