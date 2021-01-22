@@ -1,11 +1,18 @@
 HyperApp Auto History
 =====================
 
-Monitor a few selected fields in the `state` object. Whenever one of those
-fields changes, update the URL hash and push a new history entry.
+tl;dr: Keeps some fields in your `state` object in-sync with the browser's
+URL bar. Changing the state changes the URL, changing the URL changes the
+state. You can copy-paste the URL to somebody, so that not only do they see
+the same page, but they also see the same data inside the page :D
 
 If the page is loaded with no hash, populate it with default settings. If
 the page is loaded with a hash, load our initial settings from there.
+
+For apps who only care about "what page is the user viewing", it's probably
+nicer to use a router plugin which looks at the whole url, so that the user
+sees `mysite.com/cats` where this plugin would give `mysite.com/#page=cats`.
+But if you want to have multiple state variables in the URL, this can work :)
 
 There are currently three supplied encoders:
 
@@ -32,12 +39,24 @@ Args:
   change, replace the current history entry
 
 Usage:
-```
+
+```js
 import {AutoHistory} from "hyperapp-auto-history";
+
+let state = {
+    page: "track_list",
+    selected_track: null,
+    search: "",
+    track_list: [
+      {title: "Best Cat", artist: "Ciri"},
+      {title: "Test Data", artist: "The Examples"},
+      {title: "My Cat", artist: "Bonobo"},
+    ],
+};
 
 const HistoryManager = AutoHistory({
     init: state,
-    push: ["page", "track_id"],
+    push: ["page", "selected_track"],
     replace: ["search"],
     encoder: "json",
 })
