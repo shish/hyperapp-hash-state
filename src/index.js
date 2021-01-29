@@ -1,4 +1,5 @@
-const DEBUG = false;
+///////////////////////////////////////////////////////////////////////
+// Generic js-object to string (and back) functions
 
 export function encode(data, props) {
   if (props.encoder === "json") {
@@ -38,18 +39,26 @@ export function decode(data, props) {
   }
 }
 
-let just_popped = false;
+///////////////////////////////////////////////////////////////////////
+// The actual state management
+
+let we_just_changed_the_state = false;
 let last_state = {};
-function save_if_changed(state, props) {
-  if (just_popped) {
-    // If the change is due to popstate, then we don't want to save
-    // this as a new state
-    just_popped = false;
+let initialised = false;
+
+// every time the state changes, check if we care about any of those
+// changes, and update the hash if we do
+function onstatechange(state, props) {
+  if (we_just_changed_the_state) {
+    // If the change is our fault (eg, onhashchange was fired, so we
+    // took data from the hash and put it into the state), then don't
+    // react to the change
+    we_just_changed_the_state = false;
     return;
   }
   let mode = "no-change";
   let our_state = {};
-  props.all_attrs.forEach(function(attr) {
+  props.push.concat(props.replace).forEach(function(attr) {
     our_state[attr] = state[attr];
     if (last_state[attr] !== our_state[attr]) {
       // if any of our changed attributes are in the push list
@@ -61,78 +70,69 @@ function save_if_changed(state, props) {
       }
     }
   });
-  if (DEBUG)
-    console.log("State change:", last_state, "->", our_state, "=", mode);
   let hashed = "#" + encode(our_state, props);
   if (mode === "push") window.history.pushState(our_state, "", hashed);
   if (mode === "replace") window.history.replaceState(our_state, "", hashed);
   last_state = our_state;
 }
 
-/*
- * Whenever the hash changes (either via user typing, or back / forward
- * button, or some other programatic thing) we want to sync our state
- */
-function historyPopEffect(dispatch, action) {
-  let handler = dispatch.bind(null, action);
+function onhashchange(state, props) {
+  we_just_changed_the_state = true;
+  let new_state = { ...state };
+  if (window.location.hash) {
+    let hash_state = decode(window.location.hash.slice(1), props);
+    props.push.concat(props.replace).forEach(function(attr) {
+      if (hash_state[attr] !== undefined) {
+        new_state[attr] = hash_state[attr];
+      }
+    });
+    last_state = hash_state;
+  }
+  return new_state;
+}
+
+function init(dispatch, { encoded }) {
+  // creating the subscription calls init(), which calls
+  // dispatch(onhashload), which updates the state, which
+  // updates the subscriptions, which calls init() (because
+  // the first call hasn't returned yet)
+  if (initialised) {
+    return;
+  }
+  initialised = true;
+
+  let props = JSON.parse(encoded);
+
+  // load initial state from initial hash
+  dispatch(onhashchange, props);
+
+  // Whenever the hash changes (either via user typing, or back / forward
+  // button, or some other programatic thing) we want to sync our state
+  let handler = dispatch.bind(null, onhashchange, props);
   window.addEventListener("hashchange", handler);
   return function() {
     window.removeEventListener("hashchange", handler);
   };
 }
 
-function mergeHashIntoState(state, props) {
-  just_popped = true;
-  let state_to_restore = {};
-  if (window.location.hash) {
-    let hash = window.location.hash.slice(1);
-    let json = decode(hash, props);
-    props.all_attrs.forEach(function(attr) {
-      if (json[attr] !== undefined) {
-        state_to_restore[attr] = json[attr];
-      }
-    });
-  }
-  return { ...state, ...state_to_restore };
-}
-
-export function AutoHistory(args) {
+export function AutoHistory(_props, state) {
   let props = {
-    init: {},
     push: [],
     replace: [],
     encoder: "smart-url",
-    ...args
+    ..._props
   };
-  props.all_attrs = props.push.concat(props.replace);
 
-  // On initial load
-  if (window.location.hash) {
-    // If we have some state in the hash, stick that into the app state
-    let hash = window.location.hash.slice(1);
-    let json = decode(hash, props);
-    if (DEBUG) console.log("Loading initial state from hash:", json);
-    props.all_attrs.forEach(function(attr) {
-      if (json[attr] !== undefined) {
-        props.init[attr] = json[attr];
-      }
-    });
-    last_state = json;
-    just_popped = true;
-  } else {
-    // if the hash is empty, then fill it with initial app state
-    let our_state = {};
-    props.all_attrs.forEach(function(attr) {
-      our_state[attr] = props.init[attr];
-    });
-    if (DEBUG) console.log("Saving initial state to hash:", our_state);
-    window.location.hash = "#" + encode(our_state, props);
-    just_popped = true;
+  // the subscription-generator gets called on every state change -
+  // let's hijack that to run our diff-since-last-state code
+  if (initialised) {
+    onstatechange(state, props);
   }
 
-  let manager = [historyPopEffect, [mergeHashIntoState, props]];
-  manager.push_state_if_changed = function(state) {
-    save_if_changed(state, props);
-  };
-  return manager;
+  // JSON because hyperapp refreshes the subscription every
+  // time props changes - and it sees "a new object with the
+  // same contents as the old object" as a change. But it sees
+  // "a new string with the same bytes as the old string" as
+  // not-a-change \o/
+  return [init, { encoded: JSON.stringify(props) }];
 }

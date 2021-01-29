@@ -38,10 +38,12 @@ Args:
 * replace: a list of attribute names; when any of these
   change, replace the current history entry
 
+See [demo.html](demo.html) for an interactive demo
+
 Usage:
 
 ```js
-import {AutoHistory} from "hyperapp-auto-history";
+import { AutoHistory } from "hyperapp-auto-history";
 
 let state = {
     page: "track_list",
@@ -54,18 +56,14 @@ let state = {
     ],
 };
 
-const HistoryManager = AutoHistory({
-    init: state,
-    push: ["page", "selected_track"],
-    replace: ["search"],
-    encoder: "json",
-})
-
 app({
     init: state,
-    subscriptions: function(state) {
-        HistoryManager.push_state_if_changed(state);
-        return [HistoryManager];
-    }
+    subscriptions: (state) => [
+        AutoHistory({
+            push: ["page", "selected_track"],
+            replace: ["search"],
+            encoder: "json",
+        }, state)
+    ],
 })
 ```
