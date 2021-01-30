@@ -54,7 +54,7 @@ function onstatechange(state, props) {
     // took data from the hash and put it into the state), then don't
     // react to the change
     we_just_changed_the_state = false;
-    return;
+    return state;
   }
   let mode = "no-change";
   let our_state = {};
@@ -74,6 +74,7 @@ function onstatechange(state, props) {
   if (mode === "push") window.history.pushState(our_state, "", hashed);
   if (mode === "replace") window.history.replaceState(our_state, "", hashed);
   last_state = our_state;
+  return state;
 }
 
 function onhashchange(state, props) {
@@ -97,7 +98,7 @@ function init(dispatch, { encoded }) {
   // updates the subscriptions, which calls init() (because
   // the first call hasn't returned yet)
   if (initialised) {
-    return;
+    return () => null;
   }
   initialised = true;
 
@@ -105,6 +106,7 @@ function init(dispatch, { encoded }) {
 
   // load initial state from initial hash
   dispatch(onhashchange, props);
+  dispatch(onstatechange, props);
 
   // Whenever the hash changes (either via user typing, or back / forward
   // button, or some other programatic thing) we want to sync our state
