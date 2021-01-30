@@ -19,47 +19,6 @@ describe("url decoder", () => {
   });
 });
 
-describe("smart-url encoder", () => {
-  it("should work", () => {
-    let encoded = encode(
-      { state: 42, foo: "bar", array: [1, 2, 3] },
-      { encoder: "smart-url" }
-    );
-    expect(encoded).toEqual("state=42&foo=bar&array=1%2C2%2C3");
-  });
-});
-
-describe("smart-url decoder", () => {
-  it("should work", () => {
-    let decoded = decode("state=42&foo=bar", { encoder: "smart-url" });
-    expect(decoded).toEqual({ state: "42", foo: "bar" });
-  });
-  it("should try to keep type hints", () => {
-    let init = { string: "cake", int: 123, bool: false, null: null, array: [] };
-    let data = "int=42&string=42&bool=42&null=null&array=1,2,3";
-    let expected = {
-      string: "42",
-      int: 42,
-      bool: false,
-      null: null,
-      array: ["1", "2", "3"]
-    };
-    let decoded = decode(data, { encoder: "smart-url", init });
-    expect(decoded).toEqual(expected);
-  });
-  it("should turn empty string into empty array", () => {
-    let init = { array0: [], array1: [], array2: [] };
-    let data = "array0=&array1=a&array2=b,c";
-    let expected = {
-      array0: [],
-      array1: ["a"],
-      array2: ["b", "c"]
-    };
-    let decoded = decode(data, { encoder: "smart-url", init });
-    expect(decoded).toEqual(expected);
-  });
-});
-
 describe("json encoder", () => {
   it("should work", () => {
     let encoded = encode({ state: 42 }, { encoder: "json" });
