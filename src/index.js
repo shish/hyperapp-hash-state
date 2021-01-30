@@ -104,7 +104,7 @@ export function AutoHistory(_props, state) {
   let props = {
     push: [],
     replace: [],
-    encoder: "smart-url",
+    encoder: "json",
     ..._props
   };
 
