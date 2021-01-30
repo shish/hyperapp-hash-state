@@ -11,7 +11,12 @@ export function encode(data, props) {
 
 export function decode(data, props) {
   if (props.encoder === "json") {
-    return JSON.parse(decodeURIComponent(data));
+    try {
+      return JSON.parse(decodeURIComponent(data));
+    } catch (error) {
+      console.log("Error while decoding state in hash:", error);
+      return {};
+    }
   } else if (props.encoder === "url") {
     return Object.fromEntries(new URLSearchParams(data));
   }
