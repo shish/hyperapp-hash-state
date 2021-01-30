@@ -4,8 +4,6 @@
 export function encode(data, props) {
   if (props.encoder === "json") {
     return encodeURIComponent(JSON.stringify(data));
-  } else if (props.encoder === "smart-url") {
-    return new URLSearchParams(data).toString();
   } else if (props.encoder === "url") {
     return new URLSearchParams(data).toString();
   }
@@ -14,26 +12,6 @@ export function encode(data, props) {
 export function decode(data, props) {
   if (props.encoder === "json") {
     return JSON.parse(decodeURIComponent(data));
-  } else if (props.encoder === "smart-url") {
-    let obj = Object.fromEntries(new URLSearchParams(data));
-    Object.keys(obj).forEach(function(key) {
-      if (props.init !== undefined) {
-        if (props.init[key] === null) {
-          obj[key] = obj[key] === "null" ? null : obj[key];
-        }
-        if (typeof props.init[key] === "boolean") {
-          obj[key] = ["true", "on", "1"].indexOf(obj[key].toLowerCase()) !== -1;
-        }
-        if (typeof props.init[key] === "number") {
-          obj[key] = parseFloat(obj[key]);
-        }
-        if (Array.isArray(props.init[key])) {
-          if (obj[key] === "") obj[key] = [];
-          else obj[key] = obj[key].split(",");
-        }
-      }
-    });
-    return obj;
   } else if (props.encoder === "url") {
     return Object.fromEntries(new URLSearchParams(data));
   }

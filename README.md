@@ -14,20 +14,12 @@ nicer to use a router plugin which looks at the whole url, so that the user
 sees `mysite.com/cats` where this plugin would give `mysite.com/#page=cats`.
 But if you want to have multiple state variables in the URL, this can work :)
 
-There are currently three supplied encoders:
+There are currently two supplied encoders:
 
-- `smart-url`: key / value pairs, but attempt to cast data types to match
-  what was supplied in `init`
-  - If `init.foo` is a number, `state.foo` will be set to `parseFloat(value)`.
-  - If `init.foo` is a boolean, `state.foo` will be `true` if `value` is
-    any of "on", "true", or "1"
-  - If `init.foo` is null, then `"null"` will be cast to `null` and all other
-    inputs will be strings
 - `url`: everything is strings, this is the raw data and it's up to you to
   handle it correctly.
-- `json`: state is stored as a `URIEncode`'d JSON dictionary, this gives the
-  most accurate types (eg it deals with `null` in a sane way), but it does look
-  awfully ugly in the URL bar.
+- `json`: state is stored as a `URIEncode`'d JSON dictionary, this gives
+  accurate types, but it does look awfully ugly in the URL bar.
 
 Args:
 
