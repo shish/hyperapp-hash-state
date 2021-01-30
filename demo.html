@@ -12,14 +12,19 @@
         todos: state.todos.concat(state.value),
       })
 
+      const IncCounter = (state) => ({
+        ...state,
+        counter: state.counter + 1,
+      })
+
       const NewValue = (state, event) => ({
         ...state,
         value: event.target.value,
       })
 
       app({
-        init: { todos: ["one", "two"], value: "" },
-        view: ({ todos, value }) =>
+        init: { todos: ["one", "two"], value: null, counter: 1 },
+        view: ({ todos, value, counter }) =>
           h("main", {}, [
             h("h1", {}, text("To do list")),
             h("input", { type: "text", oninput: NewValue, value }),
@@ -27,6 +32,7 @@
               todos.map((todo) => h("li", {}, text(todo)))
             ),
             h("button", { onclick: AddTodo }, text("New!")),
+            h("button", { onclick: IncCounter }, text(counter)),
           ]),
         subscriptions: (state) => [
           AutoHistory({
