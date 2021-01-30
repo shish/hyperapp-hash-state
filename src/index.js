@@ -1,30 +1,3 @@
-///////////////////////////////////////////////////////////////////////
-// Generic js-object to string (and back) functions
-
-export function encode(data, props) {
-  if (props.encoder === "json") {
-    return encodeURIComponent(JSON.stringify(data));
-  } else if (props.encoder === "url") {
-    return new URLSearchParams(data).toString();
-  }
-}
-
-export function decode(data, props) {
-  if (props.encoder === "json") {
-    try {
-      return JSON.parse(decodeURIComponent(data));
-    } catch (error) {
-      console.log("Error while decoding state in hash:", error);
-      return {};
-    }
-  } else if (props.encoder === "url") {
-    return Object.fromEntries(new URLSearchParams(data));
-  }
-}
-
-///////////////////////////////////////////////////////////////////////
-// The actual state management
-
 let we_just_changed_the_state = false;
 let last_state = {};
 let initialised = false;
@@ -53,7 +26,7 @@ function onstatechange(state, props) {
       }
     }
   });
-  let hashed = "#" + encode(our_state, props);
+  let hashed = "#" + encodeURIComponent(JSON.stringify(our_state));
   if (mode === "push") window.history.pushState(our_state, "", hashed);
   if (mode === "replace") window.history.replaceState(our_state, "", hashed);
   last_state = our_state;
@@ -64,7 +37,14 @@ function onhashchange(state, props) {
   we_just_changed_the_state = true;
   let new_state = { ...state };
   if (window.location.hash) {
-    let hash_state = decode(window.location.hash.slice(1), props);
+    let hash_state = {};
+    try {
+      hash_state = JSON.parse(
+        decodeURIComponent(window.location.hash.slice(1))
+      );
+    } catch (error) {
+      console.log("Error while decoding state in hash:", error);
+    }
     props.push.concat(props.replace).forEach(function(attr) {
       if (hash_state[attr] !== undefined) {
         new_state[attr] = hash_state[attr];
@@ -104,7 +84,6 @@ export function AutoHistory(_props, state) {
   let props = {
     push: [],
     replace: [],
-    encoder: "json",
     ..._props
   };
 

@@ -11,20 +11,11 @@ the page is loaded with a hash, load our initial settings from there.
 
 For apps who only care about "what page is the user viewing", it's probably
 nicer to use a router plugin which looks at the whole url, so that the user
-sees `mysite.com/cats` where this plugin would give `mysite.com/#page=cats`.
+sees `mysite.com/cats` where this plugin would give `mysite.com/#{"page":"cats"}`.
 But if you want to have multiple state variables in the URL, this can work :)
-
-There are currently two supplied encoders:
-
-- `url`: everything is strings, this is the raw data and it's up to you to
-  handle it correctly.
-- `json`: state is stored as a `URIEncode`'d JSON dictionary, this gives
-  accurate types, but it does look awfully ugly in the URL bar.
 
 Args:
 
-* init: an initial state object; may be modified if
-  the page was loaded with args in the hash
 * push: a list of attribute names; when any of these
   change, a new history entry is pushed
 * replace: a list of attribute names; when any of these
@@ -54,7 +45,6 @@ app({
         AutoHistory({
             push: ["page", "selected_track"],
             replace: ["search"],
-            encoder: "json",
         }, state)
     ],
 })
