@@ -56,20 +56,17 @@ function onhashchange(state, props) {
 }
 
 function init(dispatch, { encoded }) {
-  // creating the subscription calls init(), which calls
-  // dispatch(onhashload), which updates the state, which
-  // updates the subscriptions, which calls init() (because
-  // the first call hasn't returned yet)
-  if (initialised) {
-    return () => null;
-  }
-  initialised = true;
-
   let props = JSON.parse(encoded);
 
-  // load initial state from initial hash
-  dispatch(onhashchange, props);
-  dispatch(onstatechange, props);
+  if (!initialised) {
+    // The first time this subscription is ever active,
+    // load state from hash
+    requestAnimationFrame(() => {
+      dispatch(onhashchange, props);
+      dispatch(onstatechange, props);
+    });
+    initialised = true;
+  }
 
   // Whenever the hash changes (either via user typing, or back / forward
   // button, or some other programatic thing) we want to sync our state
