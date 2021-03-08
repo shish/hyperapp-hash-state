@@ -64,8 +64,8 @@ function init(dispatch, { encoded }) {
     requestAnimationFrame(() => {
       dispatch(onhashchange, props);
       dispatch(onstatechange, props);
+      initialised = true;
     });
-    initialised = true;
   }
 
   // Whenever the hash changes (either via user typing, or back / forward
