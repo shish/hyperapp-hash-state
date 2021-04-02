@@ -59,11 +59,6 @@
       "no-use-before-define": "error",
       "compat/compat": "error",
       "no-console": "off"
-    },
-    "settings": {
-      "polyfills": [
-        "URLSearchParams"
-      ]
     }
   },
   "browserslist": [
