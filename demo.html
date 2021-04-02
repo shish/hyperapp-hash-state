@@ -1,65 +1,65 @@
 <!DOCTYPE html>
 <html lang="en">
-	<head>
-		<meta charset="UTF-8">
-		<script type="module">
+    <head>
+        <meta charset="UTF-8">
+        <script type="module">
 import { h, text, app } from "https://unpkg.com/hyperapp";
 import { HashStateManager } from "./src/index.js";
 
 // When the user types into the text box, make
 // a note of what they've typed
 const NewValue = (state, event) => ({
-	...state,
-	value: event.target.value,
+    ...state,
+    value: event.target.value,
 })
 
 // When the user presses the button, take the value
 // of what they've typed and add it to the list
 const AddTodo = (state) => ({
-	...state,
-	value: "",
-	todos: state.todos.concat(state.value),
+    ...state,
+    value: "",
+    todos: state.todos.concat(state.value),
 })
 
 // Keep track of how many times this button was pressed
 const IncCounter = (state) => ({
-	...state,
-	counter: state.counter + 1,
+    ...state,
+    counter: state.counter + 1,
 })
 
 app({
-	// default initial state, will be overwritten if there
-	// is state in the URL bar when the page is loaded
-	init: { todos: ["one", "two"], value: "", counter: 1 },
-	// How to render the state to HTML
-	view: ({ todos, value, counter }) => h("main", {}, [
-		h("h1", {}, text("To do list")),
-		h("input", { type: "text", oninput: NewValue, value }),
-		h("ul", {},
-			todos.map((todo) => h("li", {}, text(todo)))
-		),
-		h("button", { onclick: AddTodo }, text("New!")),
-		h("button", { onclick: IncCounter }, text(counter)),
-	]),
-	subscriptions: (state) => [
-		HashStateManager({
-			// Whenever the to-do list changes, we add a new history entry,
-			// so the browser's back and forward buttons will add and remove
-			// entries from the list
-			push: ["todos"],
-			// Whenever the text being written changes, we remember the current
-			// value, but we don't add a new history entry for every keypress
-			replace: ["value"],
-			// Note that "counter" isn't in either of these lists - that value
-			// will be reset to the default whenever the page is refreshed
-		}, state)
-	],
-	node: document.getElementById("app"),
+    // default initial state, will be overwritten if there
+    // is state in the URL bar when the page is loaded
+    init: { todos: ["one", "two"], value: "", counter: 1 },
+    // How to render the state to HTML
+    view: ({ todos, value, counter }) => h("main", {}, [
+        h("h1", {}, text("To do list")),
+        h("input", { type: "text", oninput: NewValue, value }),
+        h("ul", {},
+            todos.map((todo) => h("li", {}, text(todo)))
+        ),
+        h("button", { onclick: AddTodo }, text("New!")),
+        h("button", { onclick: IncCounter }, text(counter)),
+    ]),
+    subscriptions: (state) => [
+        HashStateManager({
+            // Whenever the to-do list changes, we add a new history entry,
+            // so the browser's back and forward buttons will add and remove
+            // entries from the list
+            push: ["todos"],
+            // Whenever the text being written changes, we remember the current
+            // value, but we don't add a new history entry for every keypress
+            replace: ["value"],
+            // Note that "counter" isn't in either of these lists - that value
+            // will be reset to the default whenever the page is refreshed
+        }, state)
+    ],
+    node: document.getElementById("app"),
 })
-		</script>
-	</head>
-	<body>
-		<noscript>This page requires JavaScript</noscript>
-		<main id="app"></main>
-	</body>
+        </script>
+    </head>
+    <body>
+        <noscript>This page requires JavaScript</noscript>
+        <main id="app"></main>
+    </body>
 </html>
