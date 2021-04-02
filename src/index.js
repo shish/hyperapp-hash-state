@@ -77,7 +77,7 @@ function init(dispatch, { encoded }) {
   };
 }
 
-export function AutoHistory(_props, state) {
+export function HashStateManager(_props, state) {
   let props = {
     push: [],
     replace: [],

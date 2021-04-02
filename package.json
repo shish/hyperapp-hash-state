@@ -1,6 +1,6 @@
 {
   "name": "@shish2k/hyperapp-hash-state",
-  "version": "2.0.8",
+  "version": "2.0.9",
   "description": "Automatically manage a subset of app state in the URL hash",
   "keywords": [
     "hyperapp",

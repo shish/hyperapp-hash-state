@@ -1,10 +1,10 @@
-import { AutoHistory } from "../src";
+import { HashStateManager } from "../src";
 
-describe("AutoHistory", () => {
+describe("HashStateManager", () => {
   it("should initialise from empty", () => {
     window.location.hash = "";
     let init = { foo: "bar", baz: "qux" };
-    AutoHistory({ push: ["foo"], replace: ["baz"] }, init);
+    HashStateManager({ push: ["foo"], replace: ["baz"] }, init);
     expect(init).toEqual({ foo: "bar", baz: "qux" });
   });
   /*
