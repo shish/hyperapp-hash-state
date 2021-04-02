@@ -1,12 +1,12 @@
 {
-  "name": "hyperapp-auto-history",
-  "version": "2.0.7",
+  "name": "@shish2k/hyperapp-hash-state",
+  "version": "2.0.8",
   "description": "Automatically manage a subset of app state in the URL hash",
   "keywords": [
     "hyperapp",
     "state"
   ],
-  "main": "dist/hyperappAutoHistory.js",
+  "main": "dist/hyperappHashState.js",
   "module": "src/index.js",
   "peerDependencies": {
     "hyperapp": "^2.0.0"
@@ -28,8 +28,8 @@
     "format:check": "prettier --list-different {src,test}/**/*.js",
     "lint": "eslint {src,test}/**/*.js",
     "test": "jest --coverage --no-cache",
-    "bundle": "rollup -i src/index.js -o dist/hyperappAutoHistory.js -m -f umd -n hyperappAutoHistory",
-    "minify": "uglifyjs dist/hyperappAutoHistory.js -o dist/hyperappAutoHistory.js -mc pure_funcs=['Object.defineProperty'] --source-map includeSources,url=hyperappAutoHistory.js.map",
+    "bundle": "rollup -i src/index.js -o dist/hyperappHashState.js -m -f umd -n hyperappHashState",
+    "minify": "uglifyjs dist/hyperappHashState.js -o dist/hyperappHashState.js -mc pure_funcs=['Object.defineProperty'] --source-map includeSources,url=hyperappHashState.js.map",
     "check": "npm run format:check && npm run lint && npm t",
     "build": "npm run check && npm run bundle && npm run minify",
     "prepare": "npm run build",
@@ -69,11 +69,11 @@
   "browserslist": [
     "defaults"
   ],
-  "author": "Shish <shish@shishnet.org>",
+  "author": "Shish <shish+npm@shishnet.org>",
   "license": "MIT",
-  "repository": "shish/hyperapp-auto-history",
-  "homepage": "https://github.com/shish/hyperapp-auto-history",
+  "repository": "shish/hyperapp-hash-state",
+  "homepage": "https://github.com/shish/hyperapp-hash-state",
   "bugs": {
-    "url": "https://github.com/shish/hyperapp-auto-history/issues"
+    "url": "https://github.com/shish/hyperapp-hash-state/issues"
   }
 }
