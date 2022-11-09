@@ -1,8 +1,15 @@
-import type { Subscription } from "hyperapp";
+import type { Dispatch, Subscription, Unsubscribe } from "hyperapp";
 
-type HashStateManagerProps = {
+type HashStateManagerArgs = {
+  push?: Array<string>;
+  replace?: Array<string>;
+};
+type HashStateManagerInternalProps = {
   push: Array<string>;
   replace: Array<string>;
+};
+type HashStateManagerProps = {
+  encoded: string;
 };
 
 let we_just_changed_the_state = false;
@@ -11,7 +18,7 @@ let initialised = false;
 
 // every time the state changes, check if we care about any of those
 // changes, and update the hash if we do
-function onstatechange(state, props: HashStateManagerProps) {
+function onstatechange<S>(state: S, props: HashStateManagerInternalProps): S {
   if (we_just_changed_the_state) {
     // If the change is our fault (eg, onhashchange was fired, so we
     // took data from the hash and put it into the state), then don't
@@ -40,7 +47,7 @@ function onstatechange(state, props: HashStateManagerProps) {
   return state;
 }
 
-function onhashchange(state, props) {
+function onhashchange<S>(state: S, props: HashStateManagerInternalProps): S {
   we_just_changed_the_state = true;
   let new_state = { ...state };
   if (window.location.hash) {
@@ -62,7 +69,10 @@ function onhashchange(state, props) {
   return new_state;
 }
 
-function init(dispatch, { encoded }) {
+function init<S>(
+  dispatch: Dispatch<S>,
+  { encoded }: HashStateManagerProps
+): Unsubscribe {
   let props = JSON.parse(encoded);
 
   if (!initialised) {
@@ -85,10 +95,10 @@ function init(dispatch, { encoded }) {
 }
 
 export function HashStateManager<S>(
-  _props,
-  state
+  _props: HashStateManagerArgs,
+  state: S
 ): Subscription<S, HashStateManagerProps> {
-  let props = {
+  let props: HashStateManagerInternalProps = {
     push: [],
     replace: [],
     ..._props,
