@@ -1,10 +1,17 @@
+import type { Subscription } from "hyperapp";
+
+type HashStateManagerProps = {
+  push: Array<string>;
+  replace: Array<string>;
+};
+
 let we_just_changed_the_state = false;
 let last_state = {};
 let initialised = false;
 
 // every time the state changes, check if we care about any of those
 // changes, and update the hash if we do
-function onstatechange(state, props) {
+function onstatechange(state, props: HashStateManagerProps) {
   if (we_just_changed_the_state) {
     // If the change is our fault (eg, onhashchange was fired, so we
     // took data from the hash and put it into the state), then don't
@@ -14,7 +21,7 @@ function onstatechange(state, props) {
   }
   let mode = "no-change";
   let our_state = {};
-  props.push.concat(props.replace).forEach(function(attr) {
+  props.push.concat(props.replace).forEach(function (attr) {
     our_state[attr] = state[attr];
     if (last_state[attr] !== our_state[attr]) {
       // if any of our changed attributes are in the push list
@@ -45,7 +52,7 @@ function onhashchange(state, props) {
     } catch (error) {
       console.log("Error while decoding state in hash:", error);
     }
-    props.push.concat(props.replace).forEach(function(attr) {
+    props.push.concat(props.replace).forEach(function (attr) {
       if (hash_state[attr] !== undefined) {
         new_state[attr] = hash_state[attr];
       }
@@ -72,16 +79,19 @@ function init(dispatch, { encoded }) {
   // button, or some other programatic thing) we want to sync our state
   let handler = dispatch.bind(null, onhashchange, props);
   window.addEventListener("hashchange", handler);
-  return function() {
+  return function () {
     window.removeEventListener("hashchange", handler);
   };
 }
 
-export function HashStateManager(_props, state) {
+export function HashStateManager<S>(
+  _props,
+  state
+): Subscription<S, HashStateManagerProps> {
   let props = {
     push: [],
     replace: [],
-    ..._props
+    ..._props,
   };
 
   // the subscription-generator gets called on every state change -
